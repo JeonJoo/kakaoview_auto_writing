@@ -80,7 +80,6 @@ elif Inew_hosi_writting_detection >= IComparison_hosi_target:
 
 # new_writting_detection 초기화
 crawling_function.new_writting_detection_check(IComparison_D_on_target, IComparison_hosi_target)
-
 ### -------------------------------------------------- 블로그 끝 ----------------------------------------------------------------
 
 
@@ -185,15 +184,46 @@ try:
         
         
         # ----------유튜브 크롤링
+        # ---------------------1분미만 시작--------------------------
         crawling_function_V2.one_minute(driver, int(youtube_counts[0]))
-        df1['1분미만'] = I1min_update_count_list.pop()
-        df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False)
+        if int(youtube_counts[0]) < int(I1min_update_count_list[0]):
+            df1['1분미만'] = I1min_update_count_list.pop()
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
 
-        for i in range(len(Str1min_title_list)):
-            kaview_write.kaview_write_youtube(driver, Str1min_title_list[i], Str1min_url_list[i], login_count)
+            for i in range(len(Str1min_title_list)):
+                kaview_write.kaview_write_youtube(driver, Str1min_title_list[i], '1분미만', Str1min_url_list[i], login_count)
 
+        elif int(youtube_counts[0]) == int(I1min_update_count_list[0]):
+            print("새 영상 없음")
+        # ---------------------1분미만 끝-----------------------------
+        #           ------------------------------------
+        # ---------------------호갱구조대 시작--------------------------
+        crawling_function_V2.hogang(driver, int(youtube_counts[1]))
+        if int(youtube_counts[1]) < int(Ihogang_update_count_list[0]):
+            df1['호갱구조대'] = Ihogang_update_count_list.pop()
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
 
+            for i in range(len(Strhogang_title_list)):
+                kaview_write.kaview_write_youtube(driver, Strhogang_title_list[i], '호갱구조대', Strhogang_url_list[i], login_count)
 
+        elif int(youtube_counts[1]) == int(Isamang_update_count_list[0]):
+            print("새 영상 없음")
+        # ---------------------호갱구조대 끝----------------------------
+        #           ------------------------------------
+        # ---------------------사망여우 시작--------------------------
+        crawling_function_V2.samang(driver, int(youtube_counts[2]))
+        if int(youtube_counts[2]) < int(Isamang_update_count_list[0]):
+            df1['사망여우'] = Isamang_update_count_list.pop()
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+
+            for i in range(len(Strsamang_title_list)):
+                kaview_write.kaview_write_youtube(driver, Strsamang_title_list[i], '사망여우', Strsamang_url_list[i], login_count)
+
+        elif int(youtube_counts[2]) == int(Isamang_update_count_list[0]):
+            print("새 영상 없음")
+        # ---------------------사망여우 끝----------------------------
+
+        # ----------유튜브 크롤링
         if (now.localtime().tm_wday < 5): # 평일
             crawling_function.hani(driver)
             kaview_write.kaview_write(driver, strTitle, hani_url_list, login_count)
