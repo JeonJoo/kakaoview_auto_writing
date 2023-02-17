@@ -1,5 +1,3 @@
-pyinstaller -F --icon=kakaoview_autosystem.ico kakaoview_autosystem_V4.py
-
 2023.0104
 V2 : 화분에 고양이(간단하개 + 호시탐탐플랜츠)
 
@@ -23,3 +21,6 @@ V4 : 유튜브 크롤링 추가
 
 2023.0216
 버그수정, 유튜브 나머지 채널 추가
+
+2023.0217
+새 채널용 유튜브 영상 크롤링(동일로직) 추가

@@ -23,7 +23,7 @@ if not os.path.exists('D:/python_venv/kakaoview_autosystem'):
 now = time
 
 # 유튜브 크롤링 관련
-header = ['1분미만', '호갱구조대', '사망여우']
+header = ['1분미만', '호갱구조대', '사망여우', '뚝딱이형', '배운돼지']
 df1 = pd.read_csv('D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv', sep=',', names=header)
 youtube_counts = list(df1.loc[0])
 
@@ -32,8 +32,8 @@ print('변수 설정 완료')
 
 print("----------load chrome web driver ")
 options = wd.ChromeOptions()
-# options.add_argument('--headless')        # Head-less 설정
-# options.add_argument('--no-sandbox')
+options.add_argument('--headless')        # Head-less 설정
+options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 driver = wd.Chrome('./driver/chromedriver.exe', options=options)
@@ -183,7 +183,7 @@ try:
         # ----------오후 실검 끝
         
         
-        # ----------유튜브 크롤링
+        # ----------유튜브 크롤링 시작
         # ---------------------1분미만 시작--------------------------
         crawling_function_V2.one_minute(driver, int(youtube_counts[0]))
         if int(youtube_counts[0]) < int(I1min_update_count_list[0]):
@@ -191,7 +191,7 @@ try:
             df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
 
             for i in range(len(Str1min_title_list)):
-                kaview_write.kaview_write_youtube(driver, Str1min_title_list[i], '1분미만', Str1min_url_list[i], login_count)
+                kaview_write.kaview_write_youtube(driver, Str1min_title_list[i], '1분미만', Str1min_url_list[i], 0, login_count)
 
         elif int(youtube_counts[0]) == int(I1min_update_count_list[0]):
             print("새 영상 없음")
@@ -204,7 +204,7 @@ try:
             df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
 
             for i in range(len(Strhogang_title_list)):
-                kaview_write.kaview_write_youtube(driver, Strhogang_title_list[i], '호갱구조대', Strhogang_url_list[i], login_count)
+                kaview_write.kaview_write_youtube(driver, Strhogang_title_list[i], '호갱구조대', Strhogang_url_list[i], 0, login_count)
 
         elif int(youtube_counts[1]) == int(Isamang_update_count_list[0]):
             print("새 영상 없음")
@@ -217,13 +217,40 @@ try:
             df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
 
             for i in range(len(Strsamang_title_list)):
-                kaview_write.kaview_write_youtube(driver, Strsamang_title_list[i], '사망여우', Strsamang_url_list[i], login_count)
+                kaview_write.kaview_write_youtube(driver, Strsamang_title_list[i], '사망여우', Strsamang_url_list[i], 0, login_count)
 
         elif int(youtube_counts[2]) == int(Isamang_update_count_list[0]):
             print("새 영상 없음")
         # ---------------------사망여우 끝----------------------------
+        #           ------------------------------------
+        # ---------------------1분요리 뚝딱이형 시작--------------------------
+        crawling_function_V2.ddookddak(driver, int(youtube_counts[3]))
+        if int(youtube_counts[3]) < int(Iddookddak_update_count_list[0]):
+            df1['뚝딱이형'] = Iddookddak_update_count_list.pop()
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
 
-        # ----------유튜브 크롤링
+            for i in range(len(Strddookddak_title_list)):
+                kaview_write.kaview_write_youtube(driver, Strddookddak_title_list[i], '1분요리 뚝딱이형', Strddookddak_url_list[i], 1, login_count)
+
+        elif int(youtube_counts[3]) == int(Iddookddak_update_count_list[0]):
+            print("새 영상 없음")
+        # ---------------------1분요리 뚝딱이형 끝----------------------------
+        #           ------------------------------------
+        # ---------------------먹어유 배운돼지 시작--------------------------
+        crawling_function_V2.baewoonpig(driver, int(youtube_counts[4]))
+        if int(youtube_counts[4]) < int(Ibaewoonpig_update_count_list[0]):
+            df1['배운돼지'] = Ibaewoonpig_update_count_list.pop()
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+
+            for i in range(len(Strbaewoonpig_title_list)):
+                kaview_write.kaview_write_youtube(driver, Strbaewoonpig_title_list[i], '먹어유 배운돼지', Strbaewoonpig_url_list[i], 1, login_count)
+
+        elif int(youtube_counts[4]) == int(Ibaewoonpig_update_count_list[0]):
+            print("새 영상 없음")
+        # ---------------------먹어유 배운돼지 끝----------------------------
+        # ----------유튜브 크롤링 끝
+
+
         if (now.localtime().tm_wday < 5): # 평일
             crawling_function.hani(driver)
             kaview_write.kaview_write(driver, strTitle, hani_url_list, login_count)

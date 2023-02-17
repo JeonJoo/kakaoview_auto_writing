@@ -36,6 +36,15 @@ Isamang_update_count_list = []
 Strsamang_title_list = []
 Strsamang_url_list = []
 
+
+Iddookddak_update_count_list = []
+Strddookddak_title_list = []
+Strddookddak_url_list = []
+
+
+Ibaewoonpig_update_count_list = []
+Strbaewoonpig_title_list = []
+Strbaewoonpig_url_list = []
 #--------------------------------------------실검봇 시작------------------------------------------------------------------
 def silgeom(driver):
     #  시그널 실검 크롤링
@@ -169,7 +178,51 @@ def samang(driver, youtube_counts):
 
 
 
+def ddookddak(driver, youtube_counts):
+    print("뚝딱이형 새영상 확인중")
+    ddookddak_url_1 = "https://vling.net/ko/channel/UC0htUSwcxfSGNfK_5Q28JkA"
+    driver.get(ddookddak_url_1)
+    print("접속 완료")
+    time.sleep(3)
+    ddookddak_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
+    Iddookddak_update_count_list.append(ddookddak_target)
 
+    if youtube_counts < ddookddak_target:
+        content_counts = ddookddak_target - youtube_counts
+        ddookddak_url_2 = 'https://www.youtube.com/results?search_query=1%EB%B6%84%EC%9A%94%EB%A6%AC%EB%9A%9D%EB%94%B1%EC%9D%B4%ED%98%95'
+        driver.get(ddookddak_url_2)
+        soup = bs(driver.page_source, 'lxml')
+        a_tag = soup.select('h3 > a')
+        youtube = 'https://www.youtube.com'
+        for idx in range(content_counts):
+            Strddookddak_url_list .append(youtube + a_tag[idx].get('href'))
+            Strddookddak_title_list.append(a_tag[idx].get('title'))
+
+    return Iddookddak_update_count_list, Strddookddak_title_list, Strddookddak_url_list
+
+
+
+def baewoonpig(driver, youtube_counts):
+    print("배운돼지 새영상 확인중")
+    baewoonpig_url_1 = "https://vling.net/ko/channel/UC5T4b53jVkm07JbYoyYiu7A"
+    driver.get(baewoonpig_url_1)
+    print("접속 완료")
+    time.sleep(3)
+    baewoonpig_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
+    Ibaewoonpig_update_count_list.append(baewoonpig_target)
+
+    if youtube_counts < baewoonpig_target:
+        content_counts = baewoonpig_target - youtube_counts
+        baewoonpig_url_2 = 'https://www.youtube.com/results?search_query=%EB%A8%B9%EC%96%B4%EC%9C%A0+%EB%B0%B0%EC%9A%B4%EB%8F%BC%EC%A7%80'
+        driver.get(baewoonpig_url_2)
+        soup = bs(driver.page_source, 'lxml')
+        a_tag = soup.select('h3 > a')
+        youtube = 'https://www.youtube.com'
+        for idx in range(content_counts):
+            Strbaewoonpig_url_list .append(youtube + a_tag[idx].get('href'))
+            Strbaewoonpig_title_list.append(a_tag[idx].get('title'))
+
+    return Ibaewoonpig_update_count_list, Strbaewoonpig_title_list, Strbaewoonpig_url_list
 
 
 
