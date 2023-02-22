@@ -7,12 +7,13 @@ import os
 import time
 print("----------library import success")
 
+
 # 실검봇 관련
 silgeom_url_list = []
 silgeom_title = []
 
 
-# 다정남 관련
+# 날씨의 아이, 먹진심 관련
 wk_url_list = []
 wk_title = []
 
@@ -21,30 +22,11 @@ Iseoulmetro_update_count_list = []
 Strseoulmetro_title_list = []
 Strseoulmetro_url_list = []
 
-
-I1min_update_count_list = []
-Str1min_title_list = []
-Str1min_url_list = []
-
-
-Ihogang_update_count_list = []
-Strhogang_title_list = []
-Strhogang_url_list = []
+Iupdate_count_list = []
+title_list = []
+url_list = []
 
 
-Isamang_update_count_list = []
-Strsamang_title_list = []
-Strsamang_url_list = []
-
-
-Iddookddak_update_count_list = []
-Strddookddak_title_list = []
-Strddookddak_url_list = []
-
-
-Ibaewoonpig_update_count_list = []
-Strbaewoonpig_title_list = []
-Strbaewoonpig_url_list = []
 #--------------------------------------------실검봇 시작------------------------------------------------------------------
 def silgeom(driver):
     #  시그널 실검 크롤링
@@ -107,127 +89,36 @@ def seoulmetro(driver):
 
 
 #--------------------------------------------유튜브 크롤링 시작------------------------------------------------------------------
-def one_minute(driver, youtube_counts):
-    print("1분미만 새영상 확인중")
-    oneminute_url_1 = "https://vling.net/ko/channel/UC2xkO7XCiStWfR3fKbzkbqw"
-    driver.get(oneminute_url_1)
+def youtube_crawling(driver, youtube_counts, url1, url2):
+    print("새영상 확인중")
+    driver.get(url1)
     print("접속 완료")
-    time.sleep(3)
-    one_min_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
-    I1min_update_count_list.append(one_min_target)
+    time.sleep(7)
+    Itarget_counts = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
+    Iupdate_count_list.append(Itarget_counts)
 
-    if youtube_counts < one_min_target:
-        content_counts = one_min_target - youtube_counts
-        oneminute_url_2 = 'https://www.youtube.com/results?search_query=1%EB%B6%84%EB%AF%B8%EB%A7%8C'
-        driver.get(oneminute_url_2)
+    if youtube_counts < Itarget_counts:
+        print("**새 영상 확인**")
+        content_counts = Itarget_counts - youtube_counts
+        driver.get(url2)
         soup = bs(driver.page_source, 'lxml')
         a_tag = soup.select('h3 > a')
         youtube = 'https://www.youtube.com'
         for idx in range(content_counts):
-            Str1min_url_list.append(youtube + a_tag[idx].get('href'))
-            Str1min_title_list.append(a_tag[idx].get('title'))
+            url_list.append(youtube + a_tag[idx].get('href'))
+            title_list.append(a_tag[idx].get('title'))
 
-    return I1min_update_count_list, Str1min_title_list, Str1min_url_list
+    elif youtube_counts >= Itarget_counts:
+        url_list.append('Null')
+        title_list.append('Null')
 
-
-def hogang(driver, youtube_counts):
-    print("호갱구조대 새영상 확인중")
-    hogang_url_1 = "https://vling.net/ko/channel/UCbVcA0cFsYE8sTHQdl8b9Ww"
-    driver.get(hogang_url_1)
-    print("접속 완료")
-    time.sleep(3)
-    hogang_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
-    Ihogang_update_count_list.append(hogang_target)
-
-    if youtube_counts < hogang_target:
-        content_counts = hogang_target - youtube_counts
-        hogang_url_2 = 'https://www.youtube.com/results?search_query=%ED%98%B8%EA%B0%B1%EA%B5%AC%EC%A1%B0%EB%8C%80'
-        driver.get(hogang_url_2)
-        soup = bs(driver.page_source, 'lxml')
-        a_tag = soup.select('h3 > a')
-        youtube = 'https://www.youtube.com'
-        for idx in range(content_counts):
-            Strhogang_url_list .append(youtube + a_tag[idx].get('href'))
-            Strhogang_title_list.append(a_tag[idx].get('title'))
-
-    return Ihogang_update_count_list, Strhogang_title_list, Strhogang_url_list
-
-
-
-def samang(driver, youtube_counts):
-    print("사망여우 새영상 확인중")
-    samang_url_1 = "https://vling.net/ko/channel/UCuyN3WjEZW41qVji8TWUPeQ"
-    driver.get(samang_url_1)
-    print("접속 완료")
-    time.sleep(3)
-    samang_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
-    Isamang_update_count_list.append(samang_target)
-
-    if youtube_counts < samang_target:
-        content_counts = samang_target - youtube_counts
-        samang_url_2 = 'https://www.youtube.com/results?search_query=%EC%82%AC%EB%A7%9D%EC%97%AC%EC%9A%B0'
-        driver.get(samang_url_2)
-        soup = bs(driver.page_source, 'lxml')
-        a_tag = soup.select('h3 > a')
-        youtube = 'https://www.youtube.com'
-        for idx in range(content_counts):
-            Strsamang_url_list .append(youtube + a_tag[idx].get('href'))
-            Strsamang_title_list.append(a_tag[idx].get('title'))
-
-    return Isamang_update_count_list, Strsamang_title_list, Strsamang_url_list
-
-
-
-def ddookddak(driver, youtube_counts):
-    print("뚝딱이형 새영상 확인중")
-    ddookddak_url_1 = "https://vling.net/ko/channel/UC0htUSwcxfSGNfK_5Q28JkA"
-    driver.get(ddookddak_url_1)
-    print("접속 완료")
-    time.sleep(3)
-    ddookddak_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
-    Iddookddak_update_count_list.append(ddookddak_target)
-
-    if youtube_counts < ddookddak_target:
-        content_counts = ddookddak_target - youtube_counts
-        ddookddak_url_2 = 'https://www.youtube.com/results?search_query=1%EB%B6%84%EC%9A%94%EB%A6%AC%EB%9A%9D%EB%94%B1%EC%9D%B4%ED%98%95'
-        driver.get(ddookddak_url_2)
-        soup = bs(driver.page_source, 'lxml')
-        a_tag = soup.select('h3 > a')
-        youtube = 'https://www.youtube.com'
-        for idx in range(content_counts):
-            Strddookddak_url_list .append(youtube + a_tag[idx].get('href'))
-            Strddookddak_title_list.append(a_tag[idx].get('title'))
-
-    return Iddookddak_update_count_list, Strddookddak_title_list, Strddookddak_url_list
-
-
-
-def baewoonpig(driver, youtube_counts):
-    print("배운돼지 새영상 확인중")
-    baewoonpig_url_1 = "https://vling.net/ko/channel/UC5T4b53jVkm07JbYoyYiu7A"
-    driver.get(baewoonpig_url_1)
-    print("접속 완료")
-    time.sleep(3)
-    baewoonpig_target = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
-    Ibaewoonpig_update_count_list.append(baewoonpig_target)
-
-    if youtube_counts < baewoonpig_target:
-        content_counts = baewoonpig_target - youtube_counts
-        baewoonpig_url_2 = 'https://www.youtube.com/results?search_query=%EB%A8%B9%EC%96%B4%EC%9C%A0+%EB%B0%B0%EC%9A%B4%EB%8F%BC%EC%A7%80'
-        driver.get(baewoonpig_url_2)
-        soup = bs(driver.page_source, 'lxml')
-        a_tag = soup.select('h3 > a')
-        youtube = 'https://www.youtube.com'
-        for idx in range(content_counts):
-            Strbaewoonpig_url_list .append(youtube + a_tag[idx].get('href'))
-            Strbaewoonpig_title_list.append(a_tag[idx].get('title'))
-
-    return Ibaewoonpig_update_count_list, Strbaewoonpig_title_list, Strbaewoonpig_url_list
+    return Iupdate_count_list, title_list, url_list
 
 
 
 
 #--------------------------------------------유튜브 크롤링 끝------------------------------------------------------------------
+
 
 
 

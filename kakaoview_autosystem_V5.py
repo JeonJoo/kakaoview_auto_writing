@@ -1,4 +1,4 @@
-# 조선일보, 중앙일보, 동아일보, 한국일보, 국민일보, 서울신문 사설 자동 크롤링 시스템
+# 카카오뷰를 위한 자동 크롤링 시스템
 
 # import library
 from selenium import webdriver as wd
@@ -23,17 +23,26 @@ if not os.path.exists('D:/python_venv/kakaoview_autosystem'):
 now = time
 
 # 유튜브 크롤링 관련
-header = ['1분미만', '호갱구조대', '사망여우', '뚝딱이형', '배운돼지']
+youtube_url_list = ["https://vling.net/ko/channel/UC2xkO7XCiStWfR3fKbzkbqw", "https://www.youtube.com/results?search_query=1%EB%B6%84%EB%AF%B8%EB%A7%8C",
+                    "https://vling.net/ko/channel/UCbVcA0cFsYE8sTHQdl8b9Ww", "https://www.youtube.com/results?search_query=%ED%98%B8%EA%B0%B1%EA%B5%AC%EC%A1%B0%EB%8C%80",
+                    "https://vling.net/ko/channel/UCuyN3WjEZW41qVji8TWUPeQ", "https://www.youtube.com/results?search_query=%EC%82%AC%EB%A7%9D%EC%97%AC%EC%9A%B0",
+                    "https://vling.net/ko/channel/UC7F6UDq3gykPZHWRhrj_BDw", "https://www.youtube.com/results?search_query=%EC%82%AC%EB%AC%BC%EA%B6%81%EC%9D%B4",
+                    "https://vling.net/ko/channel/UC0htUSwcxfSGNfK_5Q28JkA", "https://www.youtube.com/results?search_query=1%EB%B6%84%EC%9A%94%EB%A6%AC%EB%9A%9D%EB%94%B1%EC%9D%B4%ED%98%95",
+                    "https://vling.net/ko/channel/UC5T4b53jVkm07JbYoyYiu7A", "https://www.youtube.com/results?search_query=%EB%A8%B9%EC%96%B4%EC%9C%A0+%EB%B0%B0%EC%9A%B4%EB%8F%BC%EC%A7%80",
+                    "https://vling.net/ko/channel/UCfpaSruWW3S4dibonKXENjA", "https://www.youtube.com/results?search_query=%EC%AF%94%EC%96%91",
+                    "https://vling.net/ko/channel/UCA6KBBX8cLwYZNepxlE_7SA", "https://www.youtube.com/results?search_query=%ED%9E%88%EB%B0%A5"
+                    ]
+
+header = ['1분미만', '호갱구조대', '사망여우', '사물궁이', '뚝딱이형', '배운돼지', 'tzuyang쯔양', '히밥heebab']
 df1 = pd.read_csv('D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv', sep=',', names=header)
 youtube_counts = list(df1.loc[0])
-
-print('변수 설정 완료')
+print('유튜브 기존 글 수', youtube_counts)
 
 
 print("----------load chrome web driver ")
 options = wd.ChromeOptions()
-options.add_argument('--headless')        # Head-less 설정
-options.add_argument('--no-sandbox')
+# options.add_argument('--headless')        # Head-less 설정
+# options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 driver = wd.Chrome('./driver/chromedriver.exe', options=options)
@@ -81,6 +90,14 @@ elif Inew_hosi_writting_detection >= IComparison_hosi_target:
 # new_writting_detection 초기화
 crawling_function.new_writting_detection_check(IComparison_D_on_target, IComparison_hosi_target)
 ### -------------------------------------------------- 블로그 끝 ----------------------------------------------------------------
+
+
+
+### -------------------------------------------------- 크라우드픽 시작 ----------------------------------------------------------------
+crawling_function.crowd_pic(driver)
+for i in range(len(crowdpic_url)):
+    kaview_write.kaview_write_cat_on_a_flowerpot1(driver, '오늘의 사진 한장', crowdpic_url[i], '니나노뭉 작가', login_count)
+### -------------------------------------------------- 크라우드픽 끝 ----------------------------------------------------------------
 
 
 
@@ -181,74 +198,34 @@ try:
         except:
             pass
         # ----------오후 실검 끝
-        
-        
+
+
         # ----------유튜브 크롤링 시작
-        # ---------------------1분미만 시작--------------------------
-        crawling_function_V2.one_minute(driver, int(youtube_counts[0]))
-        if int(youtube_counts[0]) < int(I1min_update_count_list[0]):
-            df1['1분미만'] = I1min_update_count_list.pop()
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+        for i in range(len(header)):
+            crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
 
-            for i in range(len(Str1min_title_list)):
-                kaview_write.kaview_write_youtube(driver, Str1min_title_list[i], '1분미만', Str1min_url_list[i], 0, login_count)
+            if i <= 3:
+                Ikaview_account = 0
+            elif i > 3:
+                Ikaview_account = 1
 
-        elif int(youtube_counts[0]) == int(I1min_update_count_list[0]):
-            print("새 영상 없음")
-        # ---------------------1분미만 끝-----------------------------
-        #           ------------------------------------
-        # ---------------------호갱구조대 시작--------------------------
-        crawling_function_V2.hogang(driver, int(youtube_counts[1]))
-        if int(youtube_counts[1]) < int(Ihogang_update_count_list[0]):
-            df1['호갱구조대'] = Ihogang_update_count_list.pop()
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+            Iupdate_counts = int(Iupdate_count_list.pop())
+            if int(youtube_counts[i]) < Iupdate_counts:
+                df1[header[i]] = Iupdate_counts
+                df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+                sub_title_ = header[i]
 
-            for i in range(len(Strhogang_title_list)):
-                kaview_write.kaview_write_youtube(driver, Strhogang_title_list[i], '호갱구조대', Strhogang_url_list[i], 0, login_count)
+                for j in range(len(title_list)):
+                    title = title_list.pop()
+                    url = url_list.pop()
+                    kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
 
-        elif int(youtube_counts[1]) == int(Isamang_update_count_list[0]):
-            print("새 영상 없음")
-        # ---------------------호갱구조대 끝----------------------------
-        #           ------------------------------------
-        # ---------------------사망여우 시작--------------------------
-        crawling_function_V2.samang(driver, int(youtube_counts[2]))
-        if int(youtube_counts[2]) < int(Isamang_update_count_list[0]):
-            df1['사망여우'] = Isamang_update_count_list.pop()
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
-
-            for i in range(len(Strsamang_title_list)):
-                kaview_write.kaview_write_youtube(driver, Strsamang_title_list[i], '사망여우', Strsamang_url_list[i], 0, login_count)
-
-        elif int(youtube_counts[2]) == int(Isamang_update_count_list[0]):
-            print("새 영상 없음")
-        # ---------------------사망여우 끝----------------------------
-        #           ------------------------------------
-        # ---------------------1분요리 뚝딱이형 시작--------------------------
-        crawling_function_V2.ddookddak(driver, int(youtube_counts[3]))
-        if int(youtube_counts[3]) < int(Iddookddak_update_count_list[0]):
-            df1['뚝딱이형'] = Iddookddak_update_count_list.pop()
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
-
-            for i in range(len(Strddookddak_title_list)):
-                kaview_write.kaview_write_youtube(driver, Strddookddak_title_list[i], '1분요리 뚝딱이형', Strddookddak_url_list[i], 1, login_count)
-
-        elif int(youtube_counts[3]) == int(Iddookddak_update_count_list[0]):
-            print("새 영상 없음")
-        # ---------------------1분요리 뚝딱이형 끝----------------------------
-        #           ------------------------------------
-        # ---------------------먹어유 배운돼지 시작--------------------------
-        crawling_function_V2.baewoonpig(driver, int(youtube_counts[4]))
-        if int(youtube_counts[4]) < int(Ibaewoonpig_update_count_list[0]):
-            df1['배운돼지'] = Ibaewoonpig_update_count_list.pop()
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
-
-            for i in range(len(Strbaewoonpig_title_list)):
-                kaview_write.kaview_write_youtube(driver, Strbaewoonpig_title_list[i], '먹어유 배운돼지', Strbaewoonpig_url_list[i], 1, login_count)
-
-        elif int(youtube_counts[4]) == int(Ibaewoonpig_update_count_list[0]):
-            print("새 영상 없음")
-        # ---------------------먹어유 배운돼지 끝----------------------------
+            elif int(youtube_counts[i]) == Iupdate_counts:
+                title_list.pop()
+                url_list.pop()
+                print("--새 영상 없음--")
         # ----------유튜브 크롤링 끝
+
 
 
         if (now.localtime().tm_wday < 5): # 평일

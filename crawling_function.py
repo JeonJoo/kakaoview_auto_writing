@@ -4,6 +4,7 @@
 from selenium.webdriver.common.by import By
 import sys
 import os
+import random
 print("----------library import success")
 
 # 사설 크롤링 관련
@@ -24,6 +25,7 @@ D_on_total_writting_list = []
 IComparison_D_on_target_list = []
 I_D_on_update_count = []
 
+
 #호시탐탐 관련
 hosi_url_list = []
 hosi_content_list = []
@@ -34,6 +36,8 @@ I_hosi_update_count = []
 strTitle = []
 strBlog_title = []
 
+# 크라우드픽 관련
+crowdpic_url = []
 
 
 def new_writting_detection_check(IComparison_D_on_target, IComparison_hosi_target):
@@ -124,6 +128,7 @@ def d_on(driver):
         strBlog_title.append(title[1:Ititle_end_point])
         D_on_content_list.append(title[Ititle_end_point + 2:])
 
+
     print('Done')
     return strBlog_title, D_on_content_list, D_on_url_list, IComparison_D_on_target_list
 
@@ -158,6 +163,26 @@ def hosi(driver):
     print('Done')
 
     return strBlog_title, hosi_content_list, hosi_url_list, IComparison_hosi_target_list
+
+#--------------------------------------------크라우드픽 크롤링 시작------------------------------------------------------------------
+def crowd_pic(driver):
+    print("크라우드픽 접속 중")
+    crowd_url = "https://www.crowdpic.net/@powwow94"
+    driver.get(crowd_url)
+
+    img_total_counts = int(driver.find_element(By.CSS_SELECTOR, '#profile-detail-info-container > div.profile-dashboard-wrap > div:nth-child(1) > span.fr.color444141.album-count').text)
+    total_list = list(range(img_total_counts))
+
+    for _ in range(3):
+        random_num = random.choice(total_list)
+        crowdpic_url.append(driver.find_element(By.CSS_SELECTOR, '#grid-wrap > a:nth-child('+ str(random_num) +')').get_attribute('href'))
+        total_list.remove(random_num)
+
+    return crowdpic_url
+
+
+#--------------------------------------------크라우드픽 크롤링 끝------------------------------------------------------------------
+
 
 #--------------------------------------------조간신문------------------------------------------------------------------
 
