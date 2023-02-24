@@ -118,7 +118,9 @@ def d_on(driver):
     for i in range(6):
         try:
             D_on_url_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').get_attribute('href')))
-            title_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').text))
+            title = driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').text
+            only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
+            title_list.append(only_BMP_pattern.sub(r'', title))
         except:
             pass
 
@@ -156,7 +158,9 @@ def hosi(driver):
     for i in range(6):
         try:
             hosi_url_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').get_attribute('href')))
-            strBlog_title.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').text))
+            title = driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').text
+            only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
+            strBlog_title.append(only_BMP_pattern.sub(r'', title))
             hosi_content_list.append('호시탐탐플랜츠')
         except:
             pass
@@ -169,14 +173,13 @@ def crowd_pic(driver):
     print("크라우드픽 접속 중")
     crowd_url = "https://www.crowdpic.net/@powwow94"
     driver.get(crowd_url)
-
+    random_sample_list = []
     img_total_counts = int(driver.find_element(By.CSS_SELECTOR, '#profile-detail-info-container > div.profile-dashboard-wrap > div:nth-child(1) > span.fr.color444141.album-count').text)
-    total_list = list(range(img_total_counts))
-
-    for _ in range(3):
-        random_num = random.choice(total_list)
-        crowdpic_url.append(driver.find_element(By.CSS_SELECTOR, '#grid-wrap > a:nth-child('+ str(random_num) +')').get_attribute('href'))
-        total_list.remove(random_num)
+    random_sample_list.append(random.sample(range(1, img_total_counts), 3))
+    for i in range(3):
+        random_sample_list
+        print(random_sample_list)
+        crowdpic_url.append(driver.find_element(By.CSS_SELECTOR, '#grid-wrap > a:nth-child('+ str(random_sample_list[i]) +')').get_attribute('href'))
 
     return crowdpic_url
 

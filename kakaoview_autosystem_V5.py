@@ -30,10 +30,11 @@ youtube_url_list = ["https://vling.net/ko/channel/UC2xkO7XCiStWfR3fKbzkbqw", "ht
                     "https://vling.net/ko/channel/UC0htUSwcxfSGNfK_5Q28JkA", "https://www.youtube.com/results?search_query=1%EB%B6%84%EC%9A%94%EB%A6%AC%EB%9A%9D%EB%94%B1%EC%9D%B4%ED%98%95",
                     "https://vling.net/ko/channel/UC5T4b53jVkm07JbYoyYiu7A", "https://www.youtube.com/results?search_query=%EB%A8%B9%EC%96%B4%EC%9C%A0+%EB%B0%B0%EC%9A%B4%EB%8F%BC%EC%A7%80",
                     "https://vling.net/ko/channel/UCfpaSruWW3S4dibonKXENjA", "https://www.youtube.com/results?search_query=%EC%AF%94%EC%96%91",
-                    "https://vling.net/ko/channel/UCA6KBBX8cLwYZNepxlE_7SA", "https://www.youtube.com/results?search_query=%ED%9E%88%EB%B0%A5"
+                    "https://vling.net/ko/channel/UCA6KBBX8cLwYZNepxlE_7SA", "https://www.youtube.com/results?search_query=%ED%9E%88%EB%B0%A5",
+                    "https://vling.net/ko/channel/UCoLQZ4ZClFqVPCvvjuiUSRA", "https://www.youtube.com/results?search_query=%EB%AC%B8%EB%B3%B5%ED%9D%AC"
                     ]
 
-header = ['1분미만', '호갱구조대', '사망여우', '사물궁이', '뚝딱이형', '배운돼지', 'tzuyang쯔양', '히밥heebab']
+header = ['1분미만', '호갱구조대', '사망여우', '사물궁이', '뚝딱이형', '배운돼지', 'tzuyang쯔양', '히밥heebab', '문복희']
 df1 = pd.read_csv('D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv', sep=',', names=header)
 youtube_counts = list(df1.loc[0])
 print('유튜브 기존 글 수', youtube_counts)
@@ -100,7 +101,40 @@ for i in range(len(crowdpic_url)):
 ### -------------------------------------------------- 크라우드픽 끝 ----------------------------------------------------------------
 
 
+# ----------유튜브 크롤링 시작
+for i in range(len(header)):
+    sub_title_ = header[i]
+    print(sub_title_," 새영상 확인중")
+    if i <= 3:
+        Ikaview_account = 0
+    elif i > 3:
+        Ikaview_account = 1
 
+    # 유튜브 크롤링
+    crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
+
+    Iupdate_counts = int(Iupdate_count_list.pop())
+    if int(youtube_counts[i]) < Iupdate_counts:
+        df1[header[i]] = Iupdate_counts
+        df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+
+        for j in range(len(title_list)):
+            title = title_list.pop()
+            url = url_list.pop()
+            kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
+
+    elif (int(youtube_counts[i]) == Iupdate_counts) & (i>=6):
+        print("--새 영상 없음, 기존 영상 추가--")
+        title = title_list.pop()
+        url = url_list.pop()
+        kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
+
+
+    elif int(youtube_counts[i]) == Iupdate_counts:
+        title_list.pop()
+        url_list.pop()
+        print("--새 영상 없음--")
+# ----------유튜브 크롤링 끝
 
 
 
@@ -109,7 +143,6 @@ for i in range(len(crowdpic_url)):
 ### -------------------------------------------------- 사설을 읽다, 실검봇, 날씨의 아이 등록 시작 ----------------------------------------------------------------
 try:
     if (now.localtime().tm_hour >= 6) & (now.localtime().tm_hour < 14):    # 조간
-
         # 날씨의아이
         kaview_write.kaview_write_weather(driver)
         kaview_write.kaview_write_microdust(driver)
@@ -185,6 +218,7 @@ try:
     elif (now.localtime().tm_hour >= 19) & (now.localtime().tm_hour <=23):
 
         # ----------오후 실검 시작
+
         crawling_function_V2.silgeom(driver)
         silgeom_url_list_456 = silgeom_url_list[3:6]
         silgeom_url_list_7890 = silgeom_url_list[6:10]
@@ -199,32 +233,6 @@ try:
             pass
         # ----------오후 실검 끝
 
-
-        # ----------유튜브 크롤링 시작
-        for i in range(len(header)):
-            crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
-
-            if i <= 3:
-                Ikaview_account = 0
-            elif i > 3:
-                Ikaview_account = 1
-
-            Iupdate_counts = int(Iupdate_count_list.pop())
-            if int(youtube_counts[i]) < Iupdate_counts:
-                df1[header[i]] = Iupdate_counts
-                df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
-                sub_title_ = header[i]
-
-                for j in range(len(title_list)):
-                    title = title_list.pop()
-                    url = url_list.pop()
-                    kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
-
-            elif int(youtube_counts[i]) == Iupdate_counts:
-                title_list.pop()
-                url_list.pop()
-                print("--새 영상 없음--")
-        # ----------유튜브 크롤링 끝
 
 
 

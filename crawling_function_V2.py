@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup as bs
 import crawling_function
 import os
 import time
+import random
+import re
 print("----------library import success")
 
 
@@ -90,7 +92,7 @@ def seoulmetro(driver):
 
 #--------------------------------------------유튜브 크롤링 시작------------------------------------------------------------------
 def youtube_crawling(driver, youtube_counts, url1, url2):
-    print("새영상 확인중")
+
     driver.get(url1)
     print("접속 완료")
     time.sleep(7)
@@ -98,19 +100,31 @@ def youtube_crawling(driver, youtube_counts, url1, url2):
     Iupdate_count_list.append(Itarget_counts)
 
     if youtube_counts < Itarget_counts:
-        print("**새 영상 확인**")
         content_counts = Itarget_counts - youtube_counts
+        print("**새 영상 확인**", content_counts)
         driver.get(url2)
         soup = bs(driver.page_source, 'lxml')
         a_tag = soup.select('h3 > a')
         youtube = 'https://www.youtube.com'
         for idx in range(content_counts):
             url_list.append(youtube + a_tag[idx].get('href'))
-            title_list.append(a_tag[idx].get('title'))
+            title = a_tag[idx].get('title')
+            only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
+            title_list.append(only_BMP_pattern.sub(r'', title))
+
 
     elif youtube_counts >= Itarget_counts:
-        url_list.append('Null')
-        title_list.append('Null')
+        driver.get(url2)
+        driver.find_element(By.CSS_SELECTOR, '#more > yt-formatted-string').click()     # 8개 더 보기
+        soup = bs(driver.page_source, 'lxml')
+        a_tag = soup.select('h3 > a')
+        youtube = 'https://www.youtube.com'
+
+        idx = random.randint(0, 9)
+        url_list.append(youtube + a_tag[idx].get('href'))
+        title = a_tag[idx].get('title')
+        only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
+        title_list.append(only_BMP_pattern.sub(r'', title))
 
     return Iupdate_count_list, title_list, url_list
 
