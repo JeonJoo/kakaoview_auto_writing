@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 import sys
 import os
 import random
+import re
 print("----------library import success")
 
 # 사설 크롤링 관련
@@ -115,10 +116,10 @@ def d_on(driver):
     driver.find_element(By.CSS_SELECTOR, '#toplistSpanBlind').click()
 
     title_list = []
-    for i in range(6):
+    for i in range(1, 6):
         try:
-            D_on_url_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').get_attribute('href')))
-            title = driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').text
+            D_on_url_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i) + ') > td.title > div > span > a').get_attribute('href')))
+            title = driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i) + ') > td.title > div > span > a').text
             only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
             title_list.append(only_BMP_pattern.sub(r'', title))
         except:
@@ -142,7 +143,6 @@ def hosi(driver):
     ### iframe 관련 코드가 작동하지 않아 회피
     driver.get(hosi_url)
     print("접속 완료")
-
     hosi_total_writting_list.append(driver.find_element(By.CSS_SELECTOR, '#category-list > div > ul > li.allview > span').text)
     IComparison_hosi_target = hosi_total_writting_list.pop()
     IComparison_hosi_target = int(IComparison_hosi_target[1:-1])
@@ -155,16 +155,18 @@ def hosi(driver):
     print('목록열기')
     driver.find_element(By.CSS_SELECTOR, '#toplistSpanBlind').click()
 
-    for i in range(6):
-        try:
-            hosi_url_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').get_attribute('href')))
-            title = driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i + 1) + ') > td.title > div > span > a').text
-            only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
-            strBlog_title.append(only_BMP_pattern.sub(r'', title))
-            hosi_content_list.append('호시탐탐플랜츠')
-        except:
-            pass
-    print('Done')
+    for i in range(1,6):
+        hosi_url_list.append((driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i) + ') > td.title > div > span > a').get_attribute('href')))
+        title = driver.find_element(By.CSS_SELECTOR, '#listTopForm > table > tbody > tr:nth-child(' + str(i) + ') > td.title > div > span > a').text
+        only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
+        strBlog_title.append(only_BMP_pattern.sub(r'', title))
+        hosi_content_list.append('호시탐탐플랜츠')
+
+        if i == 5:
+            print(strBlog_title)
+            print(hosi_content_list)
+            print(hosi_url_list)
+            print('Done')
 
     return strBlog_title, hosi_content_list, hosi_url_list, IComparison_hosi_target_list
 
@@ -173,14 +175,10 @@ def crowd_pic(driver):
     print("크라우드픽 접속 중")
     crowd_url = "https://www.crowdpic.net/@powwow94"
     driver.get(crowd_url)
-    random_sample_list = []
     img_total_counts = int(driver.find_element(By.CSS_SELECTOR, '#profile-detail-info-container > div.profile-dashboard-wrap > div:nth-child(1) > span.fr.color444141.album-count').text)
-    random_sample_list.append(random.sample(range(1, img_total_counts), 3))
+    random_sample_list = random.sample(range(1, img_total_counts), 3)
     for i in range(3):
-        random_sample_list
-        print(random_sample_list)
         crowdpic_url.append(driver.find_element(By.CSS_SELECTOR, '#grid-wrap > a:nth-child('+ str(random_sample_list[i]) +')').get_attribute('href'))
-
     return crowdpic_url
 
 

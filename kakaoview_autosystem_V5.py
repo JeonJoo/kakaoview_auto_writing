@@ -31,10 +31,11 @@ youtube_url_list = ["https://vling.net/ko/channel/UC2xkO7XCiStWfR3fKbzkbqw", "ht
                     "https://vling.net/ko/channel/UC5T4b53jVkm07JbYoyYiu7A", "https://www.youtube.com/results?search_query=%EB%A8%B9%EC%96%B4%EC%9C%A0+%EB%B0%B0%EC%9A%B4%EB%8F%BC%EC%A7%80",
                     "https://vling.net/ko/channel/UCfpaSruWW3S4dibonKXENjA", "https://www.youtube.com/results?search_query=%EC%AF%94%EC%96%91",
                     "https://vling.net/ko/channel/UCA6KBBX8cLwYZNepxlE_7SA", "https://www.youtube.com/results?search_query=%ED%9E%88%EB%B0%A5",
-                    "https://vling.net/ko/channel/UCoLQZ4ZClFqVPCvvjuiUSRA", "https://www.youtube.com/results?search_query=%EB%AC%B8%EB%B3%B5%ED%9D%AC"
+                    "https://vling.net/ko/channel/UCoLQZ4ZClFqVPCvvjuiUSRA", "https://www.youtube.com/results?search_query=%EB%AC%B8%EB%B3%B5%ED%9D%AC",
+                    "https://vling.net/ko/channel/UCPKNKldggioffXPkSmjs5lQ", "https://www.youtube.com/results?search_query=%ED%96%84%EC%A7%80"
                     ]
 
-header = ['1분미만', '호갱구조대', '사망여우', '사물궁이', '뚝딱이형', '배운돼지', 'tzuyang쯔양', '히밥heebab', '문복희']
+header = ['1분미만', '호갱구조대', '사망여우', '사물궁이', '뚝딱이형', '배운돼지', 'tzuyang쯔양', '히밥heebab', '문복희', '햄지Hamzy']
 df1 = pd.read_csv('D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv', sep=',', names=header)
 youtube_counts = list(df1.loc[0])
 print('유튜브 기존 글 수', youtube_counts)
@@ -54,6 +55,7 @@ print("Done")
 
 ### -------------------------------------------------- 블로그 시작 ----------------------------------------------------------------
 # 간단하개 크롤링
+'''
 crawling_function.d_on(driver)
 IComparison_D_on_target = IComparison_D_on_target_list.pop()
 
@@ -81,7 +83,6 @@ if Inew_hosi_writting_detection < IComparison_hosi_target:
     strBlog_title = strBlog_title[5:]
     new_writting = IComparison_hosi_target - Inew_hosi_writting_detection
     print('호시탐탐플랜츠 새 글 확인 :', new_writting)
-
     for j in range(new_writting):
         kaview_write.kaview_write_cat_on_a_flowerpot(driver, strBlog_title, hosi_url_list, hosi_content_list, login_count, j)
 
@@ -90,6 +91,7 @@ elif Inew_hosi_writting_detection >= IComparison_hosi_target:
 
 # new_writting_detection 초기화
 crawling_function.new_writting_detection_check(IComparison_D_on_target, IComparison_hosi_target)
+'''
 ### -------------------------------------------------- 블로그 끝 ----------------------------------------------------------------
 
 
@@ -99,6 +101,7 @@ crawling_function.crowd_pic(driver)
 for i in range(len(crowdpic_url)):
     kaview_write.kaview_write_cat_on_a_flowerpot1(driver, '오늘의 사진 한장', crowdpic_url[i], '니나노뭉 작가', login_count)
 ### -------------------------------------------------- 크라우드픽 끝 ----------------------------------------------------------------
+
 
 
 # ----------유튜브 크롤링 시작
@@ -112,7 +115,6 @@ for i in range(len(header)):
 
     # 유튜브 크롤링
     crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
-
     Iupdate_counts = int(Iupdate_count_list.pop())
     if int(youtube_counts[i]) < Iupdate_counts:
         df1[header[i]] = Iupdate_counts
@@ -130,7 +132,9 @@ for i in range(len(header)):
         kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
 
 
-    elif int(youtube_counts[i]) == Iupdate_counts:
+    elif int(youtube_counts[i]) >= Iupdate_counts:
+        df1[header[i]] = Iupdate_counts
+        df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
         title_list.pop()
         url_list.pop()
         print("--새 영상 없음--")
@@ -216,9 +220,7 @@ try:
         kaview_write.exit_function()
     
     elif (now.localtime().tm_hour >= 19) & (now.localtime().tm_hour <=23):
-
         # ----------오후 실검 시작
-
         crawling_function_V2.silgeom(driver)
         silgeom_url_list_456 = silgeom_url_list[3:6]
         silgeom_url_list_7890 = silgeom_url_list[6:10]

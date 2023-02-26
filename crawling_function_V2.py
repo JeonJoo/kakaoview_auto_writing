@@ -91,12 +91,17 @@ def seoulmetro(driver):
 
 
 #--------------------------------------------유튜브 크롤링 시작------------------------------------------------------------------
-def youtube_crawling(driver, youtube_counts, url1, url2):
-
+def youtube_crawling(driver, youtube_counts, url1, url2, timesleep=3):
     driver.get(url1)
     print("접속 완료")
-    time.sleep(7)
-    Itarget_counts = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
+    time.sleep(timesleep)
+    try:
+        Itarget_counts = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
+    except:
+        print('재실행')
+        print(driver, youtube_counts, url1, url2)
+        youtube_crawling(driver, youtube_counts, url1, url2, 7)
+    print('Vling 통과')
     Iupdate_count_list.append(Itarget_counts)
 
     if youtube_counts < Itarget_counts:
@@ -121,6 +126,7 @@ def youtube_crawling(driver, youtube_counts, url1, url2):
         youtube = 'https://www.youtube.com'
 
         idx = random.randint(0, 9)
+        print(idx)
         url_list.append(youtube + a_tag[idx].get('href'))
         title = a_tag[idx].get('title')
         only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
