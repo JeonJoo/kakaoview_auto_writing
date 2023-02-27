@@ -131,7 +131,9 @@ def d_on(driver):
         strBlog_title.append(title[1:Ititle_end_point])
         D_on_content_list.append(title[Ititle_end_point + 2:])
 
-
+    print(strBlog_title)
+    print(D_on_url_list)
+    input('네이버링크확인')
     print('Done')
     return strBlog_title, D_on_content_list, D_on_url_list, IComparison_D_on_target_list
 

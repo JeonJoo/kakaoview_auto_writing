@@ -71,7 +71,7 @@ if Inew_d_on_writting_detection < IComparison_D_on_target:
 
 elif Inew_d_on_writting_detection >= IComparison_D_on_target:
     print('간단하개 새 글 없음')
-    
+input('')
 # 호시탐탐플랜츠 크롤링
 crawling_function.hosi(driver)
 IComparison_hosi_target = int(IComparison_hosi_target_list.pop())
@@ -91,9 +91,8 @@ elif Inew_hosi_writting_detection >= IComparison_hosi_target:
 
 # new_writting_detection 초기화
 crawling_function.new_writting_detection_check(IComparison_D_on_target, IComparison_hosi_target)
-'''
 ### -------------------------------------------------- 블로그 끝 ----------------------------------------------------------------
-
+'''
 
 
 ### -------------------------------------------------- 크라우드픽 시작 ----------------------------------------------------------------
@@ -138,6 +137,7 @@ for i in range(len(header)):
         title_list.pop()
         url_list.pop()
         print("--새 영상 없음--")
+
 # ----------유튜브 크롤링 끝
 
 
