@@ -55,7 +55,6 @@ print("Done")
 
 ### -------------------------------------------------- 블로그 시작 ----------------------------------------------------------------
 # 간단하개 크롤링
-'''
 crawling_function.d_on(driver)
 IComparison_D_on_target = IComparison_D_on_target_list.pop()
 
@@ -71,7 +70,7 @@ if Inew_d_on_writting_detection < IComparison_D_on_target:
 
 elif Inew_d_on_writting_detection >= IComparison_D_on_target:
     print('간단하개 새 글 없음')
-input('')
+
 # 호시탐탐플랜츠 크롤링
 crawling_function.hosi(driver)
 IComparison_hosi_target = int(IComparison_hosi_target_list.pop())
@@ -92,7 +91,7 @@ elif Inew_hosi_writting_detection >= IComparison_hosi_target:
 # new_writting_detection 초기화
 crawling_function.new_writting_detection_check(IComparison_D_on_target, IComparison_hosi_target)
 ### -------------------------------------------------- 블로그 끝 ----------------------------------------------------------------
-'''
+
 
 
 ### -------------------------------------------------- 크라우드픽 시작 ----------------------------------------------------------------
@@ -112,9 +111,20 @@ for i in range(len(header)):
     elif i > 3:
         Ikaview_account = 1
 
+
     # 유튜브 크롤링
+    if (i > 3) & (i < 6) & (now.localtime().tm_hour >= 19) & (now.localtime().tm_hour <=23):
+        print('배운돼지,뚝딱이형 크롤링시작')
+        crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), '0', youtube_url_list[2 * i + 1])
+        title = title_list.pop()
+        url = url_list.pop()
+        kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
+        continue
+
     crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
     Iupdate_counts = int(Iupdate_count_list.pop())
+
+  
     if int(youtube_counts[i]) < Iupdate_counts:
         df1[header[i]] = Iupdate_counts
         df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
@@ -123,13 +133,14 @@ for i in range(len(header)):
             title = title_list.pop()
             url = url_list.pop()
             kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
+        continue
 
     elif (int(youtube_counts[i]) == Iupdate_counts) & (i>=6):
         print("--새 영상 없음, 기존 영상 추가--")
         title = title_list.pop()
         url = url_list.pop()
         kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
-
+        continue
 
     elif int(youtube_counts[i]) >= Iupdate_counts:
         df1[header[i]] = Iupdate_counts
