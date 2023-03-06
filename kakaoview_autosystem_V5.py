@@ -121,33 +121,36 @@ for i in range(len(header)):
         kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
         continue
 
-    crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
-    Iupdate_counts = int(Iupdate_count_list.pop())
+    elif (i > 3) & (i < 6):
+        continue
 
-  
-    if int(youtube_counts[i]) < Iupdate_counts:
-        df1[header[i]] = Iupdate_counts
-        df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+    elif (i <= 3) | (i >= 6):
+        crawling_function_V2.youtube_crawling(driver, int(youtube_counts[i]), youtube_url_list[2 * i], youtube_url_list[2 * i + 1])
+        Iupdate_counts = int(Iupdate_count_list.pop())
 
-        for j in range(len(title_list)):
+        if int(youtube_counts[i]) < Iupdate_counts:
+            df1[header[i]] = Iupdate_counts
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+
+            for j in range(len(title_list)):
+                title = title_list.pop()
+                url = url_list.pop()
+                kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
+            continue
+
+        elif (int(youtube_counts[i]) == Iupdate_counts) & (i>=6):
+            print("--새 영상 없음, 기존 영상 추가--")
             title = title_list.pop()
             url = url_list.pop()
             kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
-        continue
+            continue
 
-    elif (int(youtube_counts[i]) == Iupdate_counts) & (i>=6):
-        print("--새 영상 없음, 기존 영상 추가--")
-        title = title_list.pop()
-        url = url_list.pop()
-        kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
-        continue
-
-    elif int(youtube_counts[i]) >= Iupdate_counts:
-        df1[header[i]] = Iupdate_counts
-        df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
-        title_list.pop()
-        url_list.pop()
-        print("--새 영상 없음--")
+        elif int(youtube_counts[i]) >= Iupdate_counts:
+            df1[header[i]] = Iupdate_counts
+            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+            title_list.pop()
+            url_list.pop()
+            print("--새 영상 없음--")
 
 # ----------유튜브 크롤링 끝
 
@@ -159,6 +162,7 @@ for i in range(len(header)):
 try:
     if (now.localtime().tm_hour >= 6) & (now.localtime().tm_hour < 14):    # 조간
         # 날씨의아이
+
         kaview_write.kaview_write_weather(driver)
         kaview_write.kaview_write_microdust(driver)
         kaview_write.kaview_write_astro(driver)
@@ -192,14 +196,15 @@ try:
         except:
             pass
         # ----------오전 실검 끝
-        
+
         if(now.localtime().tm_wday < 5):  #평일
+
             crawling_function.seoul(driver)
             kaview_write.kaview_write(driver, strTitle, seoul_url_list, login_count)
-    
+            '''
             crawling_function.chosunilbo(driver)
             kaview_write.kaview_write(driver, strTitle, chosun_url_list, login_count)
-    
+            '''
             crawling_function.joongangilbo(driver)
             kaview_write.kaview_write(driver, strTitle, joongang_url_list, login_count)
     
@@ -213,9 +218,10 @@ try:
             kaview_write.kaview_write(driver, strTitle, km_url_list, login_count)
 
         elif(now.localtime().tm_wday != 6): # 월 - 토
+            """
             crawling_function.chosunilbo(driver)
             kaview_write.kaview_write(driver, strTitle, chosun_url_list, login_count)
-    
+            """
             crawling_function.joongangilbo(driver)
             kaview_write.kaview_write(driver, strTitle, joongang_url_list, login_count)
     

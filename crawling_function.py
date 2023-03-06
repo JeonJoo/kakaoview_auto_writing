@@ -197,7 +197,9 @@ def chosunilbo(driver):
     iCrawling_count = 3
     for i in range(1, 4):
         try:
-            chosun_url_list.append((driver.find_element(By.CSS_SELECTOR, '#main > div.story-feed > div > div:nth-child(' + str(i) + ') > div > div > div > div.story-card.story-card--art-left.\|.flex.flex--wrap > div.story-card-block.story-card-right.\|.grid__col--sm-8.grid__col--md-8.grid__col--lg-8 > div.story-card-component.story-card__headline-container.\|.text--overflow-ellipsis.text--left > a').get_attribute('href')))
+            print('시도')
+            chosun_url_list.append(driver.find_element(By.CSS_SELECTOR, '#main > div.flex-chain-wrapper.lg.\|.box--margin-none.width--100.box--pad-none.box--bg-undefined.box--hidden-sm.box--hidden-md-only > section > div > div > div > div:nth-child(' + str(i) + ') > div > div > div > div.story-card.story-card--art-right.\|.flex.flex--wrap > div.story-card-block.story-card-left.\|.grid__col--sm-8.grid__col--md-8.grid__col--lg-8 > div.story-card-component.\|.text--overflow-ellipsis.text--left.box--pad-bottom-xs > a').get_attribute('href'))
+            print('test',chosun_url_list)
         except:
             iCrawling_count -= 1
             pass
