@@ -51,3 +51,6 @@ local variable '' referenced before assignment 해결(밖에서 선언한 변수
 2023.0306
 유튜브 크롤링 버그 수정
 조선일보 크롤링 실패 - 중단
+
+2023.0307
+조선일보 셀레늄 -> bs4 변경

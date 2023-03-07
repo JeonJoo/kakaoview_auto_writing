@@ -2,6 +2,7 @@
 
 # import library
 from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup as bs
 import sys
 import os
 import random
@@ -162,9 +163,6 @@ def hosi(driver):
         hosi_content_list.append('호시탐탐플랜츠')
 
         if i == 5:
-            print(strBlog_title)
-            print(hosi_content_list)
-            print(hosi_url_list)
             print('Done')
 
     return strBlog_title, hosi_content_list, hosi_url_list, IComparison_hosi_target_list
@@ -194,12 +192,14 @@ def chosunilbo(driver):
 
     # 사설 페이지에서 사진이 등록 안되면 기존의 url 과 다른 곳에 제목이 위치하게 됨.
     ## 예외처리를 하고 리스트에서 제거
+    ### selenium 크롤링 실패 -> bs4 변경
     iCrawling_count = 3
-    for i in range(1, 4):
+    chosun = 'https://www.chosun.com'
+    for i in range(3):
         try:
-            print('시도')
-            chosun_url_list.append(driver.find_element(By.CSS_SELECTOR, '#main > div.flex-chain-wrapper.lg.\|.box--margin-none.width--100.box--pad-none.box--bg-undefined.box--hidden-sm.box--hidden-md-only > section > div > div > div > div:nth-child(' + str(i) + ') > div > div > div > div.story-card.story-card--art-right.\|.flex.flex--wrap > div.story-card-block.story-card-left.\|.grid__col--sm-8.grid__col--md-8.grid__col--lg-8 > div.story-card-component.\|.text--overflow-ellipsis.text--left.box--pad-bottom-xs > a').get_attribute('href'))
-            print('test',chosun_url_list)
+            soup = bs(driver.page_source, 'lxml')
+            a_tag = soup.select('#artwrapper > div > figure > div > div > div > a')
+            chosun_url_list.append(chosun + a_tag[i].get('href'))
         except:
             iCrawling_count -= 1
             pass

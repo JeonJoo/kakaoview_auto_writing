@@ -43,8 +43,8 @@ print('유튜브 기존 글 수', youtube_counts)
 
 print("----------load chrome web driver ")
 options = wd.ChromeOptions()
-# options.add_argument('--headless')        # Head-less 설정
-# options.add_argument('--no-sandbox')
+options.add_argument('--headless')        # Head-less 설정
+options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 driver = wd.Chrome('./driver/chromedriver.exe', options=options)
