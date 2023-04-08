@@ -1,6 +1,8 @@
 # import library
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
 from bs4 import BeautifulSoup as bs
 import crawling_function
 import os
@@ -28,6 +30,8 @@ Iupdate_count_list = []
 title_list = []
 url_list = []
 
+# youtube_counts 관련
+github_list = []
 
 #--------------------------------------------실검봇 시작------------------------------------------------------------------
 def silgeom(driver):
@@ -103,6 +107,21 @@ def youtube_crawling(driver, youtube_counts, url1, url2, timesleep=3):
         title = a_tag[0].get('title')
         only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
         title_list.append(only_BMP_pattern.sub(r'', title))
+    elif url1 == '1':
+        print('한문철TV 크롤링시작')
+        driver.get(url2)
+        print("접속 완료")
+        driver.find_element(By.CSS_SELECTOR, '#more > yt-formatted-string').click()  # 8개 더 보기
+        soup = bs(driver.page_source, 'lxml')
+        a_tag = soup.select('h3 > a')
+        youtube = 'https://www.youtube.com'
+        for i in range(5):
+            url_list.append(youtube + a_tag[i].get('href'))
+            title = a_tag[i].get('title')
+            only_BMP_pattern = re.compile("["u"\U00010000-\U0010FFFF""]+", flags=re.UNICODE)
+            title_list.append(only_BMP_pattern.sub(r'', title))
+        print(title_list)
+        print(url_list)
 
     else:
         driver.get(url1)
@@ -110,7 +129,6 @@ def youtube_crawling(driver, youtube_counts, url1, url2, timesleep=3):
         global Itarget_counts    # local variable '' referenced before assignment 해결(밖에서 선언한 변수를 함수 안에서 사용할때)
         time.sleep(timesleep)
         try:
-
             Itarget_counts = int(driver.find_element(By.CSS_SELECTOR, '#scroll_mobile > section > section > div.ChannelInfo_pageContainer__LzEII > div.ChannelInfo_flexBox__FJwVH > div.BasicInfo_container__U7ibC > div.BasicInfo_contentBox__XbFCR > div.BasicInfo_infoBox__CZgyS > ul > li:nth-child(4) > p').text)
         except:
             print('재실행')
@@ -151,6 +169,32 @@ def youtube_crawling(driver, youtube_counts, url1, url2, timesleep=3):
 
 
 #--------------------------------------------유튜브 크롤링 끝------------------------------------------------------------------
+
+def github_read(driver, len_youtube_contents):
+    print("CSV 체크")
+    for i in range(len_youtube_contents):
+        github_list.append(driver.find_element(By.CSS_SELECTOR,'#LC1 > th:nth-child(' + str(i+2) + ')').text)
+    print(github_list)
+    return github_list
+
+
+
+def github_write(driver, update_list):
+    github_url = "https://github.com/JeonJoo/kakaoview_auto_writing/blob/main/youtube_contents_count.csv"
+    driver.get(github_url)
+
+    driver.find_element(By.CSS_SELECTOR,'#repo-content-pjax-container > div > div > div.Box.mt-3.position-relative > div.Box-header.js-blob-header.py-2.pr-2.d-flex.flex-shrink-0.flex-md-row.flex-items-center > div.d-flex.py-1.py-md-0.flex-auto.flex-order-1.flex-md-order-2.flex-sm-grow-0.flex-justify-between.hide-sm.hide-md > div.d-flex > div.ml-1 > form > button').click()
+    driver.find_element(By.CSS_SELECTOR, '#code-editor > div:nth-child(1) > pre').click()
+    ActionChains(driver).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
+
+    for i in range(len(update_list)):
+        driver.find_element(By.CSS_SELECTOR, '#code-editor > div:nth-child(1) > pre').send_keys(update_list[i])
+        if i == len(update_list) - 1:
+            continue
+        driver.find_element(By.CSS_SELECTOR, '#code-editor > div:nth-child(1) > pre').send_keys(',')
+
+    driver.find_element(By.CSS_SELECTOR, '#submit-file').click()
+    print('깃허브 업데이트 완료')
 
 
 

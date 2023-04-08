@@ -54,3 +54,6 @@ local variable '' referenced before assignment 해결(밖에서 선언한 변수
 
 2023.0307
 조선일보 셀레늄 -> bs4 변경
+
+2023.0308
+유튜브 총 영상 수 github에서 확인

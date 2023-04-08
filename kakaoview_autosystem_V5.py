@@ -3,12 +3,13 @@
 # import library
 from selenium import webdriver as wd
 import os
-import pandas as pd
 import crawling_function
 import crawling_function_V2
+import crawling_function_V3
 import kaview_write
 from crawling_function import *
 from crawling_function_V2 import *
+from crawling_function_V3 import *
 from kaview_write import login_count
 
 print("----------library import success")
@@ -36,21 +37,25 @@ youtube_url_list = ["https://vling.net/ko/channel/UC2xkO7XCiStWfR3fKbzkbqw", "ht
                     ]
 
 header = ['1분미만', '호갱구조대', '사망여우', '사물궁이', '뚝딱이형', '배운돼지', 'tzuyang쯔양', '히밥heebab', '문복희', '햄지Hamzy']
-df1 = pd.read_csv('D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv', sep=',', names=header)
-youtube_counts = list(df1.loc[0])
-print('유튜브 기존 글 수', youtube_counts)
+# df1 = pd.read_csv('D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv', sep=',', names=header)
+# youtube_counts = list(df1.loc[0])
+# print('유튜브 기존 글 수', youtube_counts)
 
 
 print("----------load chrome web driver ")
 options = wd.ChromeOptions()
-options.add_argument('--headless')        # Head-less 설정
-options.add_argument('--no-sandbox')
+# options.add_argument('--headless')        # Head-less 설정
+# options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 driver = wd.Chrome('./driver/chromedriver.exe', options=options)
 driver.implicitly_wait(10)    # 명시적 대기
 print("Done")
 
+
+kaview_write.github_login(driver)
+crawling_function_V2.github_read(driver, len(header))
+youtube_counts = github_list
 
 
 ### -------------------------------------------------- 블로그 시작 ----------------------------------------------------------------
@@ -101,6 +106,17 @@ for i in range(len(crowdpic_url)):
 ### -------------------------------------------------- 크라우드픽 끝 ----------------------------------------------------------------
 
 
+### -------------------------------------------------- 한문철 TV 시작 ----------------------------------------------------------------
+mc_han_url = 'https://www.youtube.com/results?search_query=%ED%95%9C%EB%AC%BC%EC%B2%A0+TV'
+crawling_function_V2.youtube_crawling(driver, 0, '1', mc_han_url)    # 0 -> 어차피 여기서 사용안하는 값
+sub_title_ = '한문철 TV'
+Ikaview_account = 2
+for i in range(5):
+    title = title_list.pop()
+    url = url_list.pop()
+    kaview_write.kaview_write_youtube(driver, title, sub_title_, url, Ikaview_account, login_count)
+### -------------------------------------------------- 한문철 TV 끝 ----------------------------------------------------------------
+
 
 # ----------유튜브 크롤링 시작
 for i in range(len(header)):
@@ -129,8 +145,8 @@ for i in range(len(header)):
         Iupdate_counts = int(Iupdate_count_list.pop())
 
         if int(youtube_counts[i]) < Iupdate_counts:
-            df1[header[i]] = Iupdate_counts
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
+            youtube_counts[i] = Iupdate_counts
+            crawling_function_V2.github_write(driver, youtube_counts)
 
             for j in range(len(title_list)):
                 title = title_list.pop()
@@ -146,14 +162,29 @@ for i in range(len(header)):
             continue
 
         elif int(youtube_counts[i]) >= Iupdate_counts:
-            df1[header[i]] = Iupdate_counts
-            df1.to_csv("D:/python_venv/kakaoview_autosystem/youtube_contents_count.csv", header=False, index=False)
-            title_list.pop()
-            url_list.pop()
+            youtube_counts[i] = Iupdate_counts
+            for _ in range(len(title_list)):
+                title_list.pop()
+                url_list.pop()
             print("--새 영상 없음--")
 
 # ----------유튜브 크롤링 끝
 
+
+# ----------블라인드 크롤링 시작
+crawling_function_V3.blind(driver)
+blind_url_list_456 = blind_url_list[3:6]
+blind_url_list_7890 = blind_url_list[6:10]
+
+try:
+    for k in range(3):
+        kaview_write.kaview_write_blind1(driver, blind_title, blind_url_list, login_count, k)
+
+    kaview_write.kaview_write_blind2(driver, blind_url_list_456, login_count)
+    kaview_write.kaview_write_blind2(driver, blind_url_list_7890, login_count)
+except:
+    pass
+# ----------블라인드 크롤링 끝
 
 
 
@@ -201,10 +232,10 @@ try:
 
             crawling_function.seoul(driver)
             kaview_write.kaview_write(driver, strTitle, seoul_url_list, login_count)
-            '''
+
             crawling_function.chosunilbo(driver)
             kaview_write.kaview_write(driver, strTitle, chosun_url_list, login_count)
-            '''
+
             crawling_function.joongangilbo(driver)
             kaview_write.kaview_write(driver, strTitle, joongang_url_list, login_count)
     
@@ -218,10 +249,10 @@ try:
             kaview_write.kaview_write(driver, strTitle, km_url_list, login_count)
 
         elif(now.localtime().tm_wday != 6): # 월 - 토
-            """
+
             crawling_function.chosunilbo(driver)
             kaview_write.kaview_write(driver, strTitle, chosun_url_list, login_count)
-            """
+
             crawling_function.joongangilbo(driver)
             kaview_write.kaview_write(driver, strTitle, joongang_url_list, login_count)
     
